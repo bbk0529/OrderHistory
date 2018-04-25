@@ -1,0 +1,23 @@
+import pandas as pd
+import matplotlib.pyplot as plt 
+%matplotlib inline
+
+f=open("2018479373")
+rawData=f.readlines()
+
+data=[]
+for line in rawData:
+    if (line.find("Goods Issue Date changed")>=0) : 
+        data.append(line.split("\t"))
+        
+df=pd.DataFrame(data)
+df[1]=pd.to_datetime(df[1])
+df[2] = pd.to_numeric(df[2])
+df[1]=df[1].apply(lambda x : x.date())
+
+plt.figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+df[2].hist(bins=10)
+
+pd.DataFrame(df.groupby(1).count()[0]).plot(kind='bar')
+
+pd.DataFrame(df.groupby(1).count()[0]).cumsum().plot(kind='line')
